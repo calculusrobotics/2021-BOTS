@@ -5,6 +5,12 @@ public class SpacePhysicsObject : KinematicBody2D
 {
     public bool Destroyed = false;
     // Called when the node enters the scene tree for the first time.
+
+    public Vector2 Velocity = 0;
+    public float RotationalVelocity = 0;
+
+    public float Mass = 1;
+
     public override void _Ready()
     {
 
@@ -13,7 +19,22 @@ public class SpacePhysicsObject : KinematicBody2D
     // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _PhysicsProcess(float delta)
     {
+        float acceleration = CalculateForce(delta) / Mass;
+        
+        collision = MoveAndCollide(Velocity*delta + 0.5*acceleration*delta*delta)
+        Velocity += Acceleration * delta;
 
+        float angularAcceleration = CalculateTorque(delta) / CalculateMomentOfInertia()
+        Rotation += RotationalVelocity*delta + 0.5*angularAcceleration*delta*delta;
+        RotationalVelocity += angularAcceleration*delta;
+
+
+        if (collision != null)
+        {
+            OnCollision()
+        }
+
+        AdditionalPhysics(delta)
     }
 
     public void OnCollision()
@@ -21,11 +42,22 @@ public class SpacePhysicsObject : KinematicBody2D
 
     }
 
-    public void AddForce(float direction, float amount)
+    public Vector2 CalculateForce(delta)
     {
-
+        return new Vector2(0, 0);
     }
-    public void AddForce(Vector2 direction, float amount)
+
+    public float CalculateTorque(delta)
+    {
+        return 0;
+    }
+
+    public float CalculateMomentOfInertia()
+    {
+        return 100000000000000000;
+    }
+
+    public void AdditionalPhysics(delta)
     {
 
     }
