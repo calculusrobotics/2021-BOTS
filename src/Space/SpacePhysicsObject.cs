@@ -24,18 +24,12 @@ public class SpacePhysicsObject : KinematicBody2D
     {
         float acceleration = CalculateForce(delta) / Mass;
         
-        collision = MoveAndCollide(Velocity*delta + 0.5*acceleration*delta*delta)
+        KinematicCollision2D collision = MoveAndCollide(Velocity*delta + 0.5*acceleration*delta*delta)
         Velocity += Acceleration * delta;
 
         float angularAcceleration = CalculateTorque(delta) / CalculateMomentOfInertia()
         Rotation += RotationalVelocity*delta + 0.5*angularAcceleration*delta*delta;
         RotationalVelocity += angularAcceleration*delta;
-
-
-        if (collision != null)
-        {
-            OnCollision()
-        }
 
         AdditionalPhysics(delta)
         // Placeholder

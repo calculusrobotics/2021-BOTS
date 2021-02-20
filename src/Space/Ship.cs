@@ -43,7 +43,7 @@ public class Ship : SpacePhysicsObject, SpaceDamagable
 
     public float ExhaustRate = 10000;
     public float ExhaustSpeed = 18370617.0386; // m/s
-    public float ExhaustAngle = 0;
+    public float ExhaustAngle = Math.PI / 6;
 
 
     public float Height = 100; // 100 meters tall
@@ -61,6 +61,8 @@ public class Ship : SpacePhysicsObject, SpaceDamagable
     public float FuelSpace = 0.8*Height;
     public float InsideArea = Math.Pow(Width - 2*Thickness, 2);
     public float FuelDensity = FueledMass / (InsideArea * FuelSpace);
+
+    public float CenterOfMass = 0;
 
 
     public event Action Destroyed;
@@ -246,15 +248,27 @@ public class Ship : SpacePhysicsObject, SpaceDamagable
         float comTop_weighted      = (Height - Thickness/2) * (Thickness)*InsideArea * ALUMINUM_DENSITY;
         float comFuelSep_weighted  = (FuelSpace + Thickness/2) * (Thickness)*InsideArea * ALUMINUM_DENSITY;
 
-        float fuelHeight = FueledMass / (FuelDensity * InsideArea);
-        float comFuel_weighted = (fuelHeight / 2) * FueledMass;
+        float fuelHeight = (Mass - AluminumMass) / (FuelDensity * InsideArea);
+        float comFuel_weighted = (fuelHeight / 2) * (Mass - AluminumMass);
 
-        
+        float com = 1/Mass * (comExterior_weighted + comTop_weighted + comFuelSep_weighted + comFuel_weighted);
+        CenterOfMass = com;
+
+        return -com * Math.Sin(ExhaustAngle) * ExhaustRate * ExhaustSpeed;
     }
 
     public float CalculateMomentOfInertia()
     {
+        float boxMOI = 1/3 * Height*Height*Height*Width*Width * ALUMINUM_DENSITY;
+        float fuelHoleMOI = 1/3 * (FuelSpace*FuelSpace*FuelSpace * InsideArea) * ALUMINUM_DENSITY;
+        float b = Height - Width;
+        float a = FuelSpace + Width;
+        float spaceMOI = 1/3 * InsideArea * ((b*b*b) - (a*a*a)) * ALUMINUM_DENSITY;
 
+        float fuelHeight = (Mass - AluminumMass) / (FuelDensity * InsideArea);
+        float fuelMOI = 1/3 * InsideArea * fuelHeight*fuelHeight*fuelHeight;
+
+        return (boxMOI - fuelHoleMOI - spaceMOI + fuelMOI) - Mass * CenterOfMass*CenterOfMass;
     }
 
     public override void AdditionalPhysics(float delta)
