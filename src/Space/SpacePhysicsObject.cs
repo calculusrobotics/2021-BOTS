@@ -3,7 +3,10 @@ using System;
 
 public class SpacePhysicsObject : KinematicBody2D
 {
-    public bool Destroyed = false;
+    [Export]
+    public float Mass = 1;
+    [Export]
+    public Vector2 Velocity = Vector2.Zero;
     // Called when the node enters the scene tree for the first time.
 
     public Vector2 Velocity = 0;
@@ -35,9 +38,15 @@ public class SpacePhysicsObject : KinematicBody2D
         }
 
         AdditionalPhysics(delta)
+        // Placeholder
+        KinematicCollision2D collision = MoveAndCollide(Velocity);
+        if (collision != null)
+        {
+            OnCollision((Node2D)collision.Collider);
+        }
     }
 
-    public void OnCollision()
+    public virtual void OnCollision(Node2D body)
     {
 
     }
@@ -46,10 +55,13 @@ public class SpacePhysicsObject : KinematicBody2D
     {
         return new Vector2(0, 0);
     }
+        // Placeholder
+        Vector2 directionVector = new Vector2(1, 0).Rotated(direction);
 
     public float CalculateTorque(delta)
     {
         return 0;
+        Velocity += (directionVector * amount / Mass);
     }
 
     public float CalculateMomentOfInertia()
@@ -60,5 +72,7 @@ public class SpacePhysicsObject : KinematicBody2D
     public void AdditionalPhysics(delta)
     {
 
+        // Placeholder
+        Velocity += (direction * amount / Mass);
     }
 }
