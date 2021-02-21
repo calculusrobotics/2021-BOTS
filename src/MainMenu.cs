@@ -16,11 +16,11 @@ public class MainMenu : MarginContainer
 		FindNode("Exit").Connect("pressed", this, nameof(OnExitPressed));
 	}
 
-    void OnNewGamePressed()
-    {
-        loaderProgress.loadPlanet("res://src/Planet/Planet.tscn");
-        ((Button) FindNode("NewGame")).Disabled = true;
-    }
+	void OnNewGamePressed()
+	{
+		loaderProgress.loadPlanet("res://src/Planet/Planet.tscn");
+		((Button) FindNode("NewGame")).Disabled = true;
+	}
 
 	void OnFullscreenPressed()
 	{

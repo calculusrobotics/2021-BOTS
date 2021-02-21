@@ -9,31 +9,39 @@ public class SpacePhysicsObject : KinematicBody2D
 	public Vector2 Velocity = Vector2.Zero;
 	// Called when the node enters the scene tree for the first time.
 
-	public Vector2 Velocity = 0;
 	public float RotationalVelocity = 0;
-
-	public float Mass = 1;
 
 	public override void _Ready()
 	{
 
 	}
 
+	public void AddForce(float direction, float amount)
+	{
+		// Placeholder
+		Vector2 directionVector = new Vector2(1, 0).Rotated(direction);
+
+		Velocity += (directionVector * amount / Mass);
+	}
+	public void AddForce(Vector2 direction, float amount)
+	{
+		// Placeholder
+		Velocity += (direction * amount / Mass);
+	}
+
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _PhysicsProcess(float delta)
 	{
-		float acceleration = CalculateForce(delta) / Mass;
+		Vector2 acceleration = CalculateForce(delta) / Mass;
 		
-		KinematicCollision2D collision = MoveAndCollide(Velocity*delta + 0.5*acceleration*delta*delta);
-		Velocity += Acceleration * delta;
+		KinematicCollision2D collision = MoveAndCollide(Velocity*delta + 0.5f*acceleration*delta*delta);
+		Velocity += acceleration * delta;
 
 		float angularAcceleration = CalculateTorque(delta) / CalculateMomentOfInertia();
-		Rotation += RotationalVelocity*delta + 0.5*angularAcceleration*delta*delta;
+		Rotation += RotationalVelocity*delta + 0.5f*angularAcceleration*delta*delta;
 		RotationalVelocity += angularAcceleration*delta;
 
 		AdditionalPhysics(delta);
-		// Placeholder
-		KinematicCollision2D collision = MoveAndCollide(Velocity);
 		if (collision != null)
 		{
 			OnCollision((Node2D)collision.Collider);
@@ -45,28 +53,22 @@ public class SpacePhysicsObject : KinematicBody2D
 
 	}
 
-	public Vector2 CalculateForce(float delta)
+	public virtual Vector2 CalculateForce(float delta)
 	{
 		return new Vector2(0, 0);
 	}
-		// Placeholder
-		Vector2 directionVector = new Vector2(1, 0).Rotated(direction);
 
-	public float CalculateTorque(float delta)
+	public virtual float CalculateTorque(float delta)
 	{
 		return 0;
-		Velocity += (directionVector * amount / Mass);
 	}
 
-	public float CalculateMomentOfInertia()
+	public virtual float CalculateMomentOfInertia()
 	{
 		return 100000000000000000;
 	}
 
-	public void AdditionalPhysics(float delta)
+	public virtual void AdditionalPhysics(float delta)
 	{
-
-		// Placeholder
-		Velocity += (direction * amount / Mass);
 	}
 }
